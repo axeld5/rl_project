@@ -2,7 +2,7 @@ import numpy as np
 import torch.optim as optim
 
 from text_snake_simple import TextSnakeEnvSimple 
-from policy_estimator import policy_estimator, reinforce, make_greedy_run
+from policy_estimator_functions.policy_estimator import policy_estimator, reinforce, make_greedy_run
 
 if __name__ == "__main__":
     env = TextSnakeEnvSimple(screen_size = (15, 10))
