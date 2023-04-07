@@ -9,7 +9,7 @@ import random
 import os, sys
 import time
 
-from dqn_functions.model_DQN import *
+from model_DQN import *
 
 
 class Direction():
@@ -23,12 +23,12 @@ direction = Direction()
 Point = namedtuple('Point', 'x, y') # tuple which entries are named x and y
 
 
-class TextSnakeEnvSimple(gym.Env):
+class TextSnakeEnv(gym.Env):
     def __init__(self,
                  screen_size,
                  LR=0.001,
                  MAX_MEMORY=100000,
-                 BATCH_SIZE = 500,
+                 BATCH_SIZE = 100,
                  GAMMA=1):
     
         self._screen_size = screen_size
@@ -38,7 +38,7 @@ class TextSnakeEnvSimple(gym.Env):
         self.observation_space = gym.spaces.MultiDiscrete(11) # 11 binary observations
         self._game = None
 
-        self.model = Linear_QNet(11, 128, 3, 3)
+        self.model = Linear_QNet(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=GAMMA)
         self.memory = deque(maxlen=MAX_MEMORY)
 
@@ -61,13 +61,19 @@ class TextSnakeEnvSimple(gym.Env):
 
         # check danger straight
         dist_danger_s = 0
-        if (dir_r and self._game.is_collision(point_r)) or \
+        while True:
+            if (dir_r and self._game.is_collision(point_r)) or \
                 (dir_l and self._game.is_collision(point_l)) or \
                 (dir_u and self._game.is_collision(point_u)) or \
                 (dir_d and self._game.is_collision(point_d)):
-            dist_danger_s = 1
-        else:
-            dist_danger_s = 0
+                break
+            else:
+                dist_danger_s += 1
+                point_l = Point(head.x - 1 - dist_danger_s, head.y)
+                point_r = Point(head.x + 1 + dist_danger_s, head.y)
+                point_u = Point(head.x, head.y - 1 - dist_danger_s)
+                point_d = Point(head.x, head.y + 1 + dist_danger_s)
+                
         
         # reset points
         point_l = Point(head.x - 1, head.y)
@@ -77,13 +83,18 @@ class TextSnakeEnvSimple(gym.Env):
 
         # check danger left
         dist_danger_l = 0
-        if (dir_d and self._game.is_collision(point_r)) or \
+        while True:
+            if (dir_d and self._game.is_collision(point_r)) or \
             (dir_u and self._game.is_collision(point_l)) or \
             (dir_r and self._game.is_collision(point_u)) or \
             (dir_l and self._game.is_collision(point_d)):
-            dist_danger_l = 1
-        else:
-            dist_danger_l = 0 
+                break
+            else:
+                dist_danger_l += 1
+                point_l = Point(head.x - 1 - dist_danger_l, head.y)
+                point_r = Point(head.x + 1 + dist_danger_l, head.y)
+                point_u = Point(head.x, head.y - 1 - dist_danger_l)
+                point_d = Point(head.x, head.y + 1 + dist_danger_l)
                 
 
         # reset points
@@ -94,13 +105,24 @@ class TextSnakeEnvSimple(gym.Env):
 
         # check danger right
         dist_danger_r = 0
-        if (dir_u and self._game.is_collision(point_r)) or \
+        while True:
+            if (dir_u and self._game.is_collision(point_r)) or \
             (dir_d and self._game.is_collision(point_l)) or \
             (dir_l and self._game.is_collision(point_u)) or \
             (dir_r and self._game.is_collision(point_d)):
-            dist_danger_r = 1
-        else:
-            dist_danger_r = 0
+                break
+            else:
+                dist_danger_r += 1
+                point_l = Point(head.x - 1 - dist_danger_r, head.y)
+                point_r = Point(head.x + 1 + dist_danger_r, head.y)
+                point_u = Point(head.x, head.y - 1 - dist_danger_r)
+                point_d = Point(head.x, head.y + 1 + dist_danger_r)
+        if dist_danger_l > 0:
+            dist_danger_l = 1 
+        if dist_danger_r > 0:
+            dist_danger_r = 1 
+        if dist_danger_s > 0:
+            dist_danger_s = 1
                 
 
         state = [
@@ -314,7 +336,7 @@ class TextSnakeEnvSimple(gym.Env):
         return score_list # the trainer is updated
     
 if __name__ == "__main__":
-    env = TextSnakeEnvSimple(screen_size = (15, 10))
+    env = TextSnakeEnv(screen_size = (15, 10))
     print("Training...")
     score_list = env.train(1, 1000)
 
