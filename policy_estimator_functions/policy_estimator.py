@@ -10,11 +10,15 @@ class policy_estimator():
         self.n_inputs = n_inputs
         self.n_outputs = n_outputs
         self.network = nn.Sequential(
-            nn.Linear(self.n_inputs, 256), 
+            nn.Linear(self.n_inputs, 128), 
             nn.LeakyReLU(), 
-            nn.Linear(256, 256),
+            nn.Linear(128, 128),
             nn.LeakyReLU(),
-            nn.Linear(256, self.n_outputs),
+            nn.Linear(128, 128),
+            nn.LeakyReLU(),
+            nn.Linear(128, 128),
+            nn.LeakyReLU(),
+            nn.Linear(128, self.n_outputs),
             nn.Softmax(dim=-1))
     
     def predict(self, state):
@@ -95,9 +99,10 @@ def make_greedy_run(env, agent):
     prev_tail = None
     while done == False:
         action_probs = agent.predict(s_0).detach().numpy()
+        print(action_probs)
         action = np.argmax(action_probs)
         s_1, reward, done, info = env.step(action)
-        os.system("cls")
+        #os.system("cls")
         r_str, r, prev_tail = env.render(r, prev_tail)
         sys.stdout.write(r_str)
         time.sleep(0.2)

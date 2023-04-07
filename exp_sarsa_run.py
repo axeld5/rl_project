@@ -5,7 +5,7 @@ from text_snake_simple import TextSnakeEnvSimple
 
 if __name__ == "__main__":
     env = TextSnakeEnvSimple(screen_size = (15, 10))
-    state_dict = create_state_dict(n_bools=12)
+    state_dict = create_state_dict(n_bools=11)
     agent_info = {"num_actions": 3, "num_states": len(state_dict), "EPS_START": 0.9, "EPS_END": 0.1, 
             "EPS_DECAY": 5000, "step_size": 0.8, "discount": 0.99, "seed": 0}
     num_episodes = 10000
