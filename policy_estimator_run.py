@@ -1,4 +1,3 @@
-import numpy as np 
 import torch.optim as optim
 
 from text_snake_simple import TextSnakeEnvSimple 
@@ -7,9 +6,13 @@ from policy_estimator_functions.policy_estimator import policy_estimator, reinfo
 if __name__ == "__main__":
     env = TextSnakeEnvSimple(screen_size = (15, 10))
     state, _, _, info = env.reset()
-    neural_agent = policy_estimator(11, 3) 
-    optimizer = optim.Adam(neural_agent.network.parameters(), lr=0.001)
-    num_episodes = 10000
-    total_rewards = reinforce(env, neural_agent, optimizer, num_episodes=num_episodes)
+    num_runs = 1
+    num_episodes = 500000
+    for run in range(num_runs):
+        neural_agent = policy_estimator(11, 3) 
+        optimizer = optim.Adam(neural_agent.network.parameters(), lr=0.0001)
+        total_rewards, converged = reinforce(env, neural_agent, optimizer, num_episodes=num_episodes)
+        if converged:
+            break
     make_greedy_run(env, neural_agent)
     env.close()

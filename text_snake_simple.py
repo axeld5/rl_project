@@ -28,7 +28,7 @@ class TextSnakeEnvSimple(gym.Env):
                  screen_size,
                  LR=0.001,
                  MAX_MEMORY=100000,
-                 BATCH_SIZE = 500,
+                 BATCH_SIZE=100,
                  GAMMA=1):
     
         self._screen_size = screen_size
@@ -38,7 +38,7 @@ class TextSnakeEnvSimple(gym.Env):
         self.observation_space = gym.spaces.MultiDiscrete(11) # 11 binary observations
         self._game = None
 
-        self.model = Linear_QNet(11, 128, 3, 3)
+        self.model = Linear_QNet(11, 128, 3, 2)
         self.trainer = QTrainer(self.model, lr=LR, gamma=GAMMA)
         self.memory = deque(maxlen=MAX_MEMORY)
 
@@ -316,7 +316,9 @@ class TextSnakeEnvSimple(gym.Env):
 if __name__ == "__main__":
     env = TextSnakeEnvSimple(screen_size = (15, 10))
     print("Training...")
-    score_list = env.train(1, 1000)
+    num_runs = 5
+    for run in range(num_runs):
+        score_list = env.train(1, 2000)
 
     # once it is trained, print one trajectory using learnt policy
 

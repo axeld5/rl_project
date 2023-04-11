@@ -9,13 +9,13 @@ def run_episode(env, agent, episode, state_dict, steps_done, e_greedy=True, rend
   steps_done += 1
   t = 0
   converged = False
+  r = None
+  prev_tail = None      
   while not done:
     action = agent.agent_step(reward, state_dict[tuple(observation)], steps_done, e_greedy)
     steps_done += 1
     observation, reward, done, info = env.step(action) 
     t += 1         
-    r = None
-    prev_tail = None      
     if render:
         os.system("cls")
         print("episode="+str(episode))

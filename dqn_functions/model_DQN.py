@@ -32,7 +32,9 @@ class QTrainer:
         self.criterion = nn.MSELoss()
 
     def train_step(self, state, action, reward, next_state, done, prediction_model):
+        state = np.array(state)
         state = torch.tensor(state, dtype=torch.float)
+        next_state = np.array(next_state)
         next_state = torch.tensor(next_state, dtype=torch.float)
         action = torch.tensor(action, dtype=torch.long) # in our implementation, one action is an int : 0, 1 or 2
         reward = torch.tensor(reward, dtype=torch.float)

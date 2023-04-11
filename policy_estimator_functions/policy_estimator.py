@@ -14,11 +14,7 @@ class policy_estimator():
             nn.LeakyReLU(), 
             nn.Linear(128, 128),
             nn.LeakyReLU(),
-            nn.Linear(128, 128),
-            nn.LeakyReLU(),
-            nn.Linear(128, 128),
-            nn.LeakyReLU(),
-            nn.Linear(128, self.n_outputs),
+            nn.Linear(128, n_outputs),
             nn.Softmax(dim=-1))
     
     def predict(self, state):
@@ -31,8 +27,8 @@ def discount_rewards(rewards, gamma=0.99):
     r = r[::-1].cumsum()[::-1]
     return r - r.mean()
 
-def reinforce(env, policy_estimator, optimizer, num_episodes=1000,
-              batch_size=100, gamma=0.99):
+def reinforce(env, policy_estimator, optimizer, num_episodes=2000,
+              batch_size=10, gamma=0.99):
     total_rewards = []
     batch_rewards = []
     batch_actions = []
@@ -40,6 +36,7 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=1000,
     batch_counter = 1
     action_space = np.arange(env.action_space.n)
     ep = 0
+    converged = False
     while ep < num_episodes:
         s_0, _, _, info = env.reset()
         states = []
@@ -50,7 +47,7 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=1000,
             action_probs = policy_estimator.predict(
                 s_0).detach().numpy()
             action = np.random.choice(action_space, 
-                p=action_probs)
+                    p=action_probs)
             s_1, r, done, info = env.step(action)
             
             states.append(s_0)
@@ -66,6 +63,7 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=1000,
                 total_rewards.append(sum(rewards))
                 if batch_counter == batch_size:
                     optimizer.zero_grad()
+                    batch_states = np.array(batch_states)
                     state_tensor = torch.FloatTensor(batch_states)
                     reward_tensor = torch.FloatTensor(
                         batch_rewards)
@@ -88,8 +86,12 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=1000,
                      "{:.2f}".format(
                      ep + 1, avg_rewards), end="")
                 ep += 1
+                last_score = info["score"]
+        if last_score > 50:
+            converged = True 
+            break
                 
-    return total_rewards
+    return total_rewards, converged
 
 def make_greedy_run(env, agent):
     s_0, _, _, info = env.reset()
@@ -99,7 +101,6 @@ def make_greedy_run(env, agent):
     prev_tail = None
     while done == False:
         action_probs = agent.predict(s_0).detach().numpy()
-        print(action_probs)
         action = np.argmax(action_probs)
         s_1, reward, done, info = env.step(action)
         #os.system("cls")
