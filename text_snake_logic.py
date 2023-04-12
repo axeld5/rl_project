@@ -76,7 +76,9 @@ class SnakeLogic:
         if distance < self.last_distance_food:
             reward = 1
         else :
-            reward = -5
+            #old
+            #reward = -5
+            reward = -2
         self.last_distance_food = distance
         return reward
 
