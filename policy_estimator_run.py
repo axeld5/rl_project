@@ -5,9 +5,9 @@ from policy_estimator_functions.policy_estimator import policy_estimator, reinfo
 
 if __name__ == "__main__":
     env = TextSnakeEnvSimple(screen_size = (15, 10))
-    state, _, _, info = env.reset()
+    state, info = env.reset()
     num_runs = 1
-    num_episodes = 500000
+    num_episodes = 100000
     for run in range(num_runs):
         neural_agent = policy_estimator(11, 3) 
         optimizer = optim.Adam(neural_agent.network.parameters(), lr=0.0001)

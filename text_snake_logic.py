@@ -63,7 +63,7 @@ class SnakeLogic:
         ## 3. Place new food if necessary
         if self.head == self.food:
             self.score += 1 # if snake eats food, score is +1
-            reward = 10
+            reward = 50
             self._place_new_food()
             # do not pop the tail because the snakes grows +1 when it eats
         else:

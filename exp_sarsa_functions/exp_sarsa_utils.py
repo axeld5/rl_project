@@ -3,9 +3,9 @@ import sys
 import time
 
 def run_episode(env, agent, episode, state_dict, steps_done, e_greedy=True, render=False):
-  state, _, _, info = env.reset()
+  state, info = env.reset()
   action = agent.agent_start(state_dict[tuple(state)], steps_done) 
-  observation, reward, done, info = env.step(action) 
+  observation, reward, done, _, info = env.step(action) 
   steps_done += 1
   t = 0
   converged = False
@@ -14,14 +14,10 @@ def run_episode(env, agent, episode, state_dict, steps_done, e_greedy=True, rend
   while not done:
     action = agent.agent_step(reward, state_dict[tuple(observation)], steps_done, e_greedy)
     steps_done += 1
-    observation, reward, done, info = env.step(action) 
+    observation, reward, done, _, info = env.step(action) 
     t += 1         
     if render:
-        os.system("cls")
-        print("episode="+str(episode))
-        r_str, r, prev_tail = env.render(r, prev_tail)
-        sys.stdout.write(r_str)
-        time.sleep(0.2)
+        env.render()
     if info["score"] > 300:
         converged = True   
         break

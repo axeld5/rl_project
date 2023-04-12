@@ -10,7 +10,7 @@ if __name__ == "__main__":
             "EPS_DECAY": 5000, "step_size": 0.8, "discount": 0.99, "seed": 0}
     esarsa_agent = ExpectedSarsaAgent()
     esarsa_agent.agent_init(agent_info)
-    num_runs = 20
+    num_runs = 1
     num_episodes = 5000
     for run in tqdm.tqdm(range(num_runs)):
         steps_done = 0

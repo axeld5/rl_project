@@ -10,11 +10,13 @@ class policy_estimator():
         self.n_inputs = n_inputs
         self.n_outputs = n_outputs
         self.network = nn.Sequential(
-            nn.Linear(self.n_inputs, 128), 
+            nn.Linear(self.n_inputs, 256), 
             nn.LeakyReLU(), 
-            nn.Linear(128, 128),
+            nn.Linear(256, 256),
             nn.LeakyReLU(),
-            nn.Linear(128, n_outputs),
+            nn.Linear(256, 256),
+            nn.LeakyReLU(),
+            nn.Linear(256, n_outputs),
             nn.Softmax(dim=-1))
     
     def predict(self, state):
@@ -38,7 +40,7 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=2000,
     ep = 0
     converged = False
     while ep < num_episodes:
-        s_0, _, _, info = env.reset()
+        s_0, info = env.reset()
         states = []
         rewards = []
         actions = []
@@ -48,7 +50,7 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=2000,
                 s_0).detach().numpy()
             action = np.random.choice(action_space, 
                     p=action_probs)
-            s_1, r, done, info = env.step(action)
+            s_1, r, done, _, info = env.step(action)
             
             states.append(s_0)
             rewards.append(r)
@@ -94,7 +96,7 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=2000,
     return total_rewards, converged
 
 def make_greedy_run(env, agent):
-    s_0, _, _, info = env.reset()
+    s_0, info = env.reset()
     done = False
     converged = False 
     r = None
@@ -102,11 +104,8 @@ def make_greedy_run(env, agent):
     while done == False:
         action_probs = agent.predict(s_0).detach().numpy()
         action = np.argmax(action_probs)
-        s_1, reward, done, info = env.step(action)
-        #os.system("cls")
-        r_str, r, prev_tail = env.render(r, prev_tail)
-        sys.stdout.write(r_str)
-        time.sleep(0.2)
+        s_1, reward, done, _, info = env.step(action)
+        env.render()
         s_0 = s_1
         if info["score"] > 300:
           converged = True 
