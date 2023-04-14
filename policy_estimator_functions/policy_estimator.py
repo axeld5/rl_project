@@ -95,19 +95,18 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=2000,
                 
     return total_rewards, converged
 
-def make_greedy_run(env, agent):
+def make_greedy_run(env, agent, render=False):
     s_0, info = env.reset()
     done = False
     converged = False 
-    r = None
-    prev_tail = None
     while done == False:
         action_probs = agent.predict(s_0).detach().numpy()
         action = np.argmax(action_probs)
         s_1, reward, done, _, info = env.step(action)
-        env.render()
+        if render:
+            env.render()
         s_0 = s_1
         if info["score"] > 300:
           converged = True 
           break
-    return converged
+    return converged, info["score"]

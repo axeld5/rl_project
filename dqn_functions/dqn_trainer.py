@@ -53,8 +53,8 @@ class QTrainer:
         return np.random.choice(ties)
 
 
-    def train(self, env, n_episodes, epsilon_start = 1, clone_model_freq = 10, eps_decay=0.9, eps_min=0.05):
-        score_list = []
+    def train(self, env, n_episodes, epsilon_start = 1, clone_model_freq = 10, eps_decay=0.9, eps_min=0.05, add_every=500):
+        score_list = [0]
         epsilon = epsilon_start
 
         for ep in tqdm(range(n_episodes)):
@@ -84,7 +84,6 @@ class QTrainer:
                 if done:
                     # train long memory, plot result
                     self.train_long_memory(prediction_model)
-
                     score_list.append(info["score"])
                     break
         return score_list # the trainer is updated
@@ -105,8 +104,6 @@ class QTrainer:
             action = torch.unsqueeze(action, 0)
             reward = torch.unsqueeze(reward, 0)
             done = (done, )
-
-        
 
         # 1: predicted Q values with current state
         pred = self.model(state)
