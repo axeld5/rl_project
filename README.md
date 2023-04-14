@@ -53,3 +53,14 @@ If we only use these steps of training, the snake often gets stuck into an infin
 The usual solution is to ([source](https://ai.stackexchange.com/questions/13202/reinforcement-learning-to-play-snake-network-seems-to-not-get-trained-at-all)) : 
 - Use an "experience replay table". ie we store all $s, a, r, s'$ (state, action, reward, next state) in memory. Once in a while (the frequency here is set to every 10 episodes), we take a random sample (here mini batch size is 100) of those stored items, and train the network once on this mini batch. This is a kind of "long term memory".
 - Use a "target network". When generating target Q values, use a cloned copy of the learning network, and only update this clone every N steps (with N here set to 10 episodes).
+
+# Expected SARSA Model
+
+We use a classic SARSA model. Here are the steps within a **training episode** : 
+
+- Get observation of the state
+- Choose an action using an epsilon-greedy policy. With probability $\varepsilon$, a random action is chosen. With probability $1 - \varepsilon$, the SARSA algorithm is used to choose the next action (argmax of predicted SARSA Q values) . The value of epsilon is made to decay and reach progressively 0 to make room for exploration early and make the algorithm more deterministic later in stages.
+- The SARSA Q values are updates based on the SARSA Algorithm 
+- Redo until game over, and reset states for the next episode
+
+# Policy estimator functions
