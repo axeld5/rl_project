@@ -23,7 +23,7 @@ def run_episode(env, agent, episode, state_dict, steps_done, e_greedy=True, rend
         break
   if done:
     agent.agent_end(reward)
-  return steps_done, converged
+  return steps_done, converged, info["score"]
 
 def create_state_dict(n_bools):
     state_dict = {}

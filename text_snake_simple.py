@@ -1,15 +1,11 @@
+import os, sys, time
 import gymnasium as gym
 import numpy as np
-import torch
 
-from text_snake_logic import *
+from IPython.display import clear_output
 from collections import namedtuple
 
-import os, sys
-import time
-
-from dqn_functions.dqn_trainer import QTrainer
-
+from text_snake_logic import *
 
 class Direction():
     def __init__(self):
@@ -23,7 +19,7 @@ Point = namedtuple('Point', 'x, y') # tuple which entries are named x and y
 
 
 class TextSnakeEnvSimple(gym.Env):
-    def __init__(self, screen_size):
+    def __init__(self, screen_size, colab):
     
         self._screen_size = screen_size
         self.action_space = gym.spaces.Discrete(3)
@@ -32,6 +28,7 @@ class TextSnakeEnvSimple(gym.Env):
         self.observation_space = gym.spaces.MultiBinary(11) # 11 binary observations
         self._game = None
 
+        self.colab = colab
         self.r_str = None 
         self.r_unflipped = None
         self.point_tail = None 
@@ -238,7 +235,10 @@ class TextSnakeEnvSimple(gym.Env):
         self.r_unflipped = r_unflipped 
         self.point_tail = point_tail 
 
-        os.system("cls")
+        if not self.colab:
+            os.system("cls")
+        else:
+            clear_output(wait=True)
         sys.stdout.write(self.r_str)
         time.sleep(0.2)
         #return r_str, r_unflipped, point_tail
@@ -246,38 +246,3 @@ class TextSnakeEnvSimple(gym.Env):
     def close(self):
         pass
     
-if __name__ == "__main__":
-    env = TextSnakeEnvSimple(screen_size = (15, 10))
-    print("Training...")
-    qtrainer = QTrainer()
-    num_runs = 1
-    for run in range(num_runs):
-        score_list = qtrainer.train(env, 1000)
-
-    # once it is trained, print one trajectory using learnt policy
-
-    # initiate environment
-    obs, info = env.reset()
-
-    # iterate
-    r = None
-    prev_tail = None
-    while True:
-
-        # Select next action
-        prediction = qtrainer.model(torch.tensor(obs, dtype=torch.float))
-        action = qtrainer.argmax(prediction).item()
-
-        # Appy action and return new observation of the environment
-        obs, reward, done, _, info = env.step(action)
-
-        print(done)
-
-        # Render the game
-        env.render() # FPS
-
-        # If player is dead break
-        if done:
-            break
-
-    env.close()
