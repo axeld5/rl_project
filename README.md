@@ -19,7 +19,7 @@
 **Rewards** :   
 - Eat food : +50
 - Crash wall or eat his tail = Collision : -100
-- Else : If the snake is closer to the food than last step : +1 ; if the snake is not closer to the food than last step : -5
+- Else : If the snake is closer to the food than last step : +1 ; if the snake is not closer to the food than last step : -2
 
 **Collision** : If the screen size is (10, 15), then there is a collision when the snake moves to a point where $x = 0$ or $x = 10$ or $y = 0$ or $y = 15$.
 
