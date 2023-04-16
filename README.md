@@ -4,9 +4,9 @@
 
 **State** : Array of size 11 :
 
-- Distance to Danger Left : int (0 if the point next to head is collision)
-- Distance to Danger Straight : int
-- Distance to Danger Right : int
+- Distance to Danger Left : Bool (0 if the point next to head is collision)
+- Distance to Danger Straight : Bool
+- Distance to Danger Right : Bool
 - Last move direction is Left : Bool
 - Last move direction is Right : Bool
 - Last move direction is Up : Bool
