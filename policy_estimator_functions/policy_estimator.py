@@ -99,13 +99,15 @@ def make_greedy_run(env, agent, render=False):
     s_0, info = env.reset()
     done = False
     converged = False 
-    while done == False:
+    num_steps = 0
+    while done == False and num_steps < 5000:
         action_probs = agent.predict(s_0).detach().numpy()
         action = np.argmax(action_probs)
         s_1, reward, done, _, info = env.step(action)
         if render:
             env.render()
         s_0 = s_1
+        num_steps += 1
         if info["score"] > 300:
           converged = True 
           break
