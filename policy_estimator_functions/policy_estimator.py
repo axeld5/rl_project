@@ -45,7 +45,8 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=2000,
         rewards = []
         actions = []
         done = False
-        while done == False:
+        num_steps = 0
+        while done == False and num_steps < 5000:
             action_probs = policy_estimator.predict(
                 s_0).detach().numpy()
             action = np.random.choice(action_space, 
@@ -56,7 +57,9 @@ def reinforce(env, policy_estimator, optimizer, num_episodes=2000,
             rewards.append(r)
             actions.append(action)
             s_0 = s_1
-            if done:
+            num_steps += 1 
+            
+            if done or num_steps >= 5000:
                 batch_rewards.extend(discount_rewards(
                     rewards, gamma))
                 batch_states.extend(states)
@@ -99,13 +102,15 @@ def make_greedy_run(env, agent, render=False):
     s_0, info = env.reset()
     done = False
     converged = False 
-    while done == False:
+    num_steps = 0
+    while done == False and num_steps < 5000:
         action_probs = agent.predict(s_0).detach().numpy()
         action = np.argmax(action_probs)
         s_1, reward, done, _, info = env.step(action)
         if render:
             env.render()
         s_0 = s_1
+        num_steps += 1
         if info["score"] > 300:
           converged = True 
           break
