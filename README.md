@@ -24,7 +24,3 @@
 **Collision** : If the screen size is (10, 15), then there is a collision when the snake moves to a point where $x = 0$ or $x = 10$ or $y = 0$ or $y = 15$.
 
 NB : Axis are (x,y), the 0 is at the top left corner of the screen ; y point down (=> going "UP" on the screen means y _decreases_), x points right --> it's easier for the print.
-
-# Models evaluated
-
-Four different agents are evaluated on this project: an expected Sarsa-based agent, a DQN-based agent, a Reinforce-based agent, and a PPO-based agent. All evaluations can be performed in the "snake_game.ipynb" notebook. 
